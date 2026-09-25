@@ -10,7 +10,6 @@ import EditoraView from "../views/EditoraView.vue";
 import AutorView from "../views/AutorView.vue";
 import CarrinhoView from "../views/CarrinhoView.vue";
 import ComprasView from "../views/ComprasView.vue";
-import FavoritosView from "../views/FavoritosView.vue";
 import NotFoundView from "../views/NotFoundView.vue";
 
 const router = createRouter({
@@ -71,12 +70,6 @@ const router = createRouter({
       path: "/compras",
       name: "compras",
       component: ComprasView,
-      meta: { requiresAuth: true },
-    },
-    {
-      path: "/favoritos",
-      name: "favoritos",
-      component: FavoritosView,
       meta: { requiresAuth: true },
     },
     {

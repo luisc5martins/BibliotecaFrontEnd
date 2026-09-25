@@ -35,8 +35,4 @@ export default class LivrosApi {
     const { data } = await axios.post(`/livros/${id}/adicionar_ao_carrinho/`, { quantidade });
     return data;
   }
-  async favoritar(id, payload) {
-    const { data } = await axios.post(`/livros/${id}/favoritar/`, payload);
-    return data;
-  }
 }
