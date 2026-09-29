@@ -146,10 +146,13 @@ function fecharPopup() {
 
           <div>
             <strong>{{ livro.titulo }}</strong>
-
-            <button v-if="livro.sinopse" class="btn-sinopse" @click.stop="abrirSinopse(livro)">
-              Ver sinopse
-            </button>
+            <span class="quantidade-livro" :class="{ esgotado: livro.quantidade === 0 }">
+              {{ livro.quantidade > 0
+              ? `${livro.quantidade} disponíveis`
+              : 'Indisponível'
+              }}
+            </span>
+            <button v-if="livro.sinopse" class="btn-sinopse" @click.stop="abrirSinopse(livro)">Ver sinopse</button>
           </div>
         </div>
         <div class="list-item-actions">
@@ -431,6 +434,15 @@ function fecharPopup() {
 
 .popup-btn {
   min-width: 100px;
+}
+
+.quantidade-livro {
+  margin-top: 4px;
+  font-size: 13px;
+}
+
+.quantidade-livro.esgotado {
+  color: #dc3545;
 }
 
 @keyframes popupEntrada {
