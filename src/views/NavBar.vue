@@ -37,11 +37,12 @@ onUnmounted(() => document.removeEventListener("click", closeDropdown));
   <header class="navbar">
     <nav>
       <div class="nav-left">
-        <router-link :to="{ name: 'home' }" class="nav-link nav-logo">Livraria</router-link>
+        <img src="../assets/logo.png" class="logo-nav">
+        <router-link :to="{ name: 'home' }" class="nav-link nav-logo">Biblioteca Antares</router-link>
         <router-link v-if="canManage" :to="{ name: 'categorias' }" class="nav-link">Categorias</router-link>
         <router-link v-if="canManage" :to="{ name: 'editoras' }" class="nav-link">Editoras</router-link>
         <router-link v-if="canManage" :to="{ name: 'autores' }" class="nav-link">Autores</router-link>
-        <router-link :to="{ name: 'livros' }" class="nav-link">Livros</router-link>
+        <router-link :to="{ name: 'livros' }" class="btn-livros">Livros</router-link>
       </div>
 
       <div class="nav-right" v-if="isLoggedIn">
@@ -104,5 +105,21 @@ onUnmounted(() => document.removeEventListener("click", closeDropdown));
 .theme-toggle {
   background: none; border: none; cursor: pointer;
   font-size: 1.1rem; padding: 4px 8px; line-height: 1;
+}
+.logo-nav{
+  width: 3%;
+}
+.btn-livros{
+  background-color: #26749F;
+  border-radius: 10px;
+  color: white;
+}
+:root {
+    --azul: #368BB8;
+    --azul-escuro: #26749F;
+    --preto: #151515;
+    --branco: #FFFFFF;
+    --fundo: #F7F7F7;
+    --cinza: #D9D9D9;
 }
 </style>

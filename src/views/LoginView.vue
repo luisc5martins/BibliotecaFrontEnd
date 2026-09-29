@@ -14,7 +14,14 @@ const password = ref('');
 async function handleLogin() {
   try {
     await authStore.login(email.value, password.value);
-    router.push({ name: 'home' });
+
+      if (authStore.isAdmin) {
+        router.push({ name: 'admin' });
+      } else if (authStore.isFuncionario) {
+        router.push({ name: 'funcionario' });
+      } else {
+        router.push({ name: 'home' });
+      }
   } catch (err) {
     toastStore.showToast('Email ou senha inválidos.', 'error');
   }

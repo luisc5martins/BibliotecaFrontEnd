@@ -24,8 +24,7 @@ const defaultLivro = {
   id: null,
   titulo: "",
   isbn: "",
-  quantidade: 0,
-  preco: 0,
+  sinopse: "",
   categoria: "",
   editora: "",
   autores: [],
@@ -46,8 +45,7 @@ watch(
       livro.id = val.id;
       livro.titulo = val.titulo || "";
       livro.isbn = val.isbn || "";
-      livro.quantidade = val.quantidade || 0;
-      livro.preco = val.preco || 0;
+      livro.sinopse = val.sinopse || "";
       livro.categoria = val.categoria?.id || val.categoria || "";
       livro.editora = val.editora?.id || val.editora || "";
       categoriaTexto.value = val.categoria?.descricao || '';
@@ -121,8 +119,7 @@ async function salvar() {
     const payload = {
       titulo: livro.titulo,
       isbn: livro.isbn,
-      quantidade: livro.quantidade,
-      preco: livro.preco,
+      sinopse: livro.sinopse,
       categoria: livro.categoria || null,
       editora: livro.editora || null,
       autores: livro.autores,
@@ -172,6 +169,18 @@ onMounted(() => {
               />
             </div>
           </div>
+            <div class="form-row">
+              <div class="form-group" style="flex: 1">
+                <label class="label">Sinopse</label>
+                <textarea
+                  class="input textarea"
+                  v-model="livro.sinopse"
+                  placeholder="Digite a sinopse do livro..."
+                  rows="5"
+                  maxlength="2000"
+                ></textarea>
+              </div>
+            </div>
           <div class="form-row">
             <div class="form-group" style="flex: 1">
               <label class="label">Editora</label>
@@ -273,5 +282,10 @@ onMounted(() => {
   .modal-body {
     flex-direction: column;
   }
+}
+.livro-sinopse {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: var(--text-muted);
 }
 </style>
