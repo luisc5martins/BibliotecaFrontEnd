@@ -2,7 +2,7 @@
 import { ref, onMounted, onUnmounted, computed } from "vue";
 import ModalAdicionarLivro from "../components/livros/ModalAdicionarLivro.vue";
 import { useLivroStore } from "@/stores/livro";
-import { useCompraStore } from "@/stores/compra";
+import { useReservaStore } from "@/stores/reserva";
 import { useAuthStore } from "@/stores/auth";
 import { useToastStore } from "@/stores/toast";
 import LivrosApi from "@/api/livros";
@@ -20,7 +20,7 @@ onMounted(async () => {
 
 const livrosApi = new LivrosApi();
 const livroStore = useLivroStore();
-const compraStore = useCompraStore();
+const reservaStore = useReservaStore();
 const authStore = useAuthStore();
 const toast = useToastStore();
 const canManage = computed(() => authStore.canManage);
@@ -49,11 +49,6 @@ function onBusca() {
   }, 400);
 }
 
-function editar(livro) {
-  livroParaEditar.value = { ...livro };
-  showModal.value = true;
-}
-
 function abrirModal() {
   livroParaEditar.value = null;
   showModal.value = true;
@@ -69,12 +64,25 @@ async function excluir(id) {
   }
 }
 
-async function adicionarAoCarrinho(livroId) {
+async function reservarLivro(livroId) {
   try {
-    await compraStore.adicionarAoCarrinho(livroId);
-    toast.showToast('Adicionado ao carrinho!');
+    await reservaStore.criarReserva(livroId)
+
+    mostrarPopup(
+      'Livro reservado com sucesso!',
+      'sucesso'
+    )
   } catch (error) {
-    toast.showToast(error.response?.data?.detail || 'Erro ao adicionar ao carrinho.', 'error');
+    const data = error.response?.data
+
+    const mensagem = Array.isArray(data)
+      ? data[0]
+      : data?.detail ||
+        data?.non_field_errors?.[0] ||
+        data?.message ||
+        'Erro ao reservar o livro.'
+
+    mostrarPopup(mensagem, 'erro')
   }
 }
 
@@ -95,6 +103,24 @@ function abrirSinopse(livro) {
 
 function fecharSinopse() {
   livroSinopse.value = null;
+}
+
+const popup = ref({
+  aberto: false,
+  mensagem: '',
+  tipo: 'sucesso'
+})
+
+function mostrarPopup(mensagem, tipo = 'sucesso') {
+  popup.value = {
+    aberto: true,
+    mensagem,
+    tipo
+  }
+}
+
+function fecharPopup() {
+  popup.value.aberto = false
 }
 
 </script>
@@ -127,14 +153,11 @@ function fecharSinopse() {
           </div>
         </div>
         <div class="list-item-actions">
-          <button class="btn btn-success btn-sm btn-icon-sm" @click="adicionarAoCarrinho(livro.id)"
-            title="Adicionar ao carrinho"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-              stroke-linejoin="round">
-              <circle cx="9" cy="21" r="1" />
-              <circle cx="20" cy="21" r="1" />
-              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-            </svg></button>
+          <button class="btn btn-reservar btn-sm btn-icon-sm" @click="reservarLivro(livro.id)" title="Reservar livro">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 4h16v17l-8-4-8 4V4z" />
+            </svg>
+          </button>
           <button v-if="canManage" class="btn btn-destructive btn-sm btn-icon-sm" @click="excluir(livro.id)"
             title="Excluir"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
               fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -178,9 +201,38 @@ function fecharSinopse() {
 
   <modal-adicionar-livro v-if="showModal" :livro-para-editar="livroParaEditar" @close="showModal = false"
     @salvo="aoSalvar" />
+
+  <div v-if="popup.aberto" class="popup-overlay" @click.self="fecharPopup">
+    <div class="popup">
+      <button class="popup-fechar" @click="fecharPopup">
+        &times;
+      </button>
+
+      <div class="popup-icone" :class="popup.tipo">
+        <span v-if="popup.tipo === 'sucesso'">✓</span>
+        <span v-else>!</span>
+      </div>
+
+      <h2>{{ popup.tipo === 'sucesso' ? 'Reserva realizada!' : 'Não foi possível reservar' }}</h2>
+      <p>{{ popup.mensagem }}</p>
+    
+      <button class="btn btn-reservar popup-btn" @click="fecharPopup">OK</button>
+    </div>
+  </div>
 </template>
 
 <style scoped>
+
+.btn-reservar {
+  background-color: #26749F;
+  border-color: #26749F;
+  color: white;
+}
+
+.btn-reservar:hover {
+  background-color: #1f5f83;
+  border-color: #1f5f83;
+}
 
 :root {
     --azul: #368BB8;
@@ -309,5 +361,87 @@ function fecharSinopse() {
 
 .btn-sinopse:active {
   transform: translateY(1px);
+}
+
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 20px;
+}
+
+.popup {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  background: var(--background);
+  border-radius: var(--radius);
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  animation: popupEntrada 0.2s ease-out;
+}
+
+.popup-fechar {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  border: none;
+  background: transparent;
+  font-size: 28px;
+  cursor: pointer;
+  color: var(--text-muted);
+}
+
+.popup-icone {
+  width: 50px;
+  height: 50px;
+  margin: 0 auto 1rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  font-weight: bold;
+}
+
+.popup-icone.sucesso {
+  background: #26749F;
+  color: white;
+}
+
+.popup-icone.erro {
+  background: #dc3545;
+  color: white;
+}
+
+.popup h2 {
+  margin: 0 0 0.75rem;
+}
+
+.popup p {
+  margin: 0 0 1.5rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.popup-btn {
+  min-width: 100px;
+}
+
+@keyframes popupEntrada {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 </style>

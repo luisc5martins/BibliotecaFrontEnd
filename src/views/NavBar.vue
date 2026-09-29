@@ -38,7 +38,7 @@ onUnmounted(() => document.removeEventListener("click", closeDropdown));
     <nav>
       <div class="nav-left">
         <img src="../assets/logo.png" class="logo-nav">
-        <router-link :to="{ name: 'home' }" class="nav-link nav-logo">Biblioteca Antares</router-link>
+        <router-link :to="{ name: 'home' }" class="nav-title">Biblioteca Antares</router-link>
         <router-link v-if="canManage" :to="{ name: 'categorias' }" class="nav-link">Categorias</router-link>
         <router-link v-if="canManage" :to="{ name: 'editoras' }" class="nav-link">Editoras</router-link>
         <router-link v-if="canManage" :to="{ name: 'autores' }" class="nav-link">Autores</router-link>
@@ -50,10 +50,7 @@ onUnmounted(() => document.removeEventListener("click", closeDropdown));
           <svg v-if="currentTheme === 'light'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
           <svg v-else xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         </button>
-        <router-link :to="{ name: 'carrinho' }" class="nav-link" title="Carrinho">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-        </router-link>
-        <router-link :to="{ name: 'compras' }" class="nav-link">Compras</router-link>
+        <router-link :to="{ name: 'reservas' }" class="nav-link">Reservas</router-link>
 
         <div class="user-menu" @click="toggleDropdown">
           <img
@@ -113,6 +110,10 @@ onUnmounted(() => document.removeEventListener("click", closeDropdown));
   background-color: #26749F;
   border-radius: 10px;
   color: white;
+  text-decoration: none;
+  border-radius: 50px;
+  padding:4px 15px;
+  display: inline-block;
 }
 :root {
     --azul: #368BB8;
@@ -121,5 +122,13 @@ onUnmounted(() => document.removeEventListener("click", closeDropdown));
     --branco: #FFFFFF;
     --fundo: #F7F7F7;
     --cinza: #D9D9D9;
+}
+.nav-title{ 
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: large;
+  margin-left: 10px;
+  margin-right: 10px;
 }
 </style>

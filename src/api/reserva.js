@@ -1,0 +1,23 @@
+import axios from "axios"
+
+export default class ReservaApi {
+  async buscarReservas(page = 1) {
+    const { data } = await axios.get(`/reservas/?page=${page}`)
+    return data
+  }
+
+  async buscarReserva(id) {
+    const { data } = await axios.get(`/reservas/${id}/`)
+    return data
+  }
+
+  async criarReserva(itens) {
+    const { data } = await axios.post("/reservas/", { itens })
+    return data
+  }
+
+  async atualizarReserva(id, itens) {
+    const { data } = await axios.put(`/reservas/${id}/`, { itens })
+    return data
+  }
+}

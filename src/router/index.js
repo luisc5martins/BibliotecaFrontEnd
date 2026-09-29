@@ -9,11 +9,10 @@ import UsuarioView from "../views/UsuarioView.vue";
 import LivroView from "../views/LivroView.vue";
 import EditoraView from "../views/EditoraView.vue";
 import AutorView from "../views/AutorView.vue";
-import CarrinhoView from "../views/CarrinhoView.vue";
-import ComprasView from "../views/ComprasView.vue";
 import NotFoundView from "../views/NotFoundView.vue";
 import AdminView from "../views/AdminView.vue";
 import FuncionarioView from "../views/FuncionarioView.vue";
+import ReservasView from "../views/ReservasView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -64,15 +63,9 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
-      path: "/carrinho",
-      name: "carrinho",
-      component: CarrinhoView,
-      meta: { requiresAuth: true },
-    },
-    {
-      path: "/compras",
-      name: "compras",
-      component: ComprasView,
+      path: "/reservas",
+      name: "reservas",
+      component: ReservasView,
       meta: { requiresAuth: true },
     },
     {
