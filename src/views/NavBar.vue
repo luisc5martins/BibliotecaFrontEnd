@@ -38,7 +38,7 @@ onUnmounted(() => document.removeEventListener("click", closeDropdown));
     <nav>
       <div class="nav-left">
         <img src="../assets/logo.png" class="logo-nav">
-        <router-link :to="{ name: 'home' }" class="nav-title">Biblioteca Antares</router-link>
+        <router-link :to="{ name: 'livros' }" class="nav-title">Biblioteca Antares</router-link>
         <router-link v-if="canManage" :to="{ name: 'categorias' }" class="nav-link">Categorias</router-link>
         <router-link v-if="canManage" :to="{ name: 'editoras' }" class="nav-link">Editoras</router-link>
         <router-link v-if="canManage" :to="{ name: 'autores' }" class="nav-link">Autores</router-link>

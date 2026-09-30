@@ -18,9 +18,9 @@ async function handleLogin() {
       if (authStore.isAdmin) {
         router.push({ name: 'admin' });
       } else if (authStore.isFuncionario) {
-        router.push({ name: 'funcionario' });
+        router.push({ name: 'livros' });
       } else {
-        router.push({ name: 'home' });
+        router.push({ name: 'livros' });
       }
   } catch (err) {
     toastStore.showToast('Email ou senha inválidos.', 'error');

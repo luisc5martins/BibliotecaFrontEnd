@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useAuthStore } from '@/stores/auth';
-import HomeView from "../views/HomeView.vue";
 import CategoriaView from "../views/CategoriaView.vue";
 import LoginView from "../views/LoginView.vue";
 import LogoutView from "../views/LogoutView.vue";
@@ -18,18 +17,13 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: "/",
-      name: "home",
-      component: HomeView,
-    },
-    {
       path: "/categorias",
       name: "categorias",
       component: CategoriaView,
       meta: { requiresAuth: true },
     },
     {
-      path: "/livros",
+      path: "/home'",
       name: "livros",
       component: LivroView,
       meta: { requiresAuth: true },
@@ -47,7 +41,7 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
-      path: "/login",
+      path: "/",
       name: "login",
       component: LoginView,
     },
@@ -125,7 +119,7 @@ router.beforeEach(async (to) => {
       return true;
     }
 
-    return { name: 'home' };
+    return { name: 'livros' };
   }
 
   // Rota de funcionário
@@ -134,7 +128,7 @@ router.beforeEach(async (to) => {
       return true;
     }
 
-    return { name: 'home' };
+    return { name: 'livros' };
   }
 
   return true;

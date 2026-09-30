@@ -167,13 +167,7 @@ const formatDate = (dateString) => {
       <!-- Informações do Sistema -->
       <div class="system-info">
         <h3 class="system-title">Informações da Conta</h3>
-        <p>ID: <strong>{{ usuario.id }}</strong></p>
-        <p>Tipo de Usuário: <strong>{{ usuario.tipo_usuario === 3 ? 'Gerente' : usuario.tipo_usuario === 2 ? 'Vendedor' : 'Cliente' }}</strong></p>
-        <p>Superuser: <strong>{{ usuario.is_superuser ? "Sim" : "Não" }}</strong></p>
-        <p>Ativo: <strong>{{ usuario.is_active ? "Sim" : "Não" }}</strong></p>
-        <p>Staff: <strong>{{ usuario.is_staff ? "Sim" : "Não" }}</strong></p>
         <p>Último Login: <strong>{{ formatDate(usuario.last_login) || "Nunca logado" }}</strong></p>
-        <p>Grupos: <strong>{{ usuario.groups?.length ? usuario.groups.map((g) => g.name).join(", ") : "Nenhum" }}</strong></p>
       </div>
     </div>
   </div>
@@ -183,6 +177,9 @@ const formatDate = (dateString) => {
 </template>
 
 <style scoped>
+.form-group {
+  margin-bottom: 4%;
+}
 .user-card {
   max-width: 500px;
   margin: 0 auto;

@@ -7,7 +7,7 @@ const router = useRouter()
 
 onMounted(() => {
   authStore.logout()
-  router.push({ name: 'home' })
+  router.push({ name: 'livros' })
 })
 </script>
 

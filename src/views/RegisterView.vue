@@ -20,7 +20,7 @@ async function handleRegister() {
   }
   try {
     await authStore.register(email.value, name.value, password.value);
-    router.push({ name: 'home' });
+    router.push({ name: 'livros' });
   } catch (err) {
     const msg = err.response?.data?.email?.[0]
       || err.response?.data?.password?.[0]
