@@ -106,19 +106,24 @@ function badgeClass(status) {
   font-size: 0.875rem;
   color: var(--muted-foreground);
   margin-bottom: 0.5rem;
+  color: white;
 }
 
 .reserva-itens {
   list-style: none;
   padding: 0;
   margin: 0;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid white;
   padding-top: 0.5rem;
+  color: white;
 }
 
 .reserva-itens li {
   font-size: 0.85rem;
-  color: var(--muted-foreground);
   padding: 0.25rem 0;
+}
+
+.card{
+  background-color: var(--primary);
 }
 </style>

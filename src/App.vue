@@ -23,6 +23,6 @@ onMounted(async () => {
 
 <style>
 main {
-  padding-top: 8px;
+  padding-top: 40px;
 }
 </style>

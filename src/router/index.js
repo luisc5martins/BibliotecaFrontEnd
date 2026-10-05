@@ -12,6 +12,7 @@ import NotFoundView from "../views/NotFoundView.vue";
 import AdminView from "../views/AdminView.vue";
 import FuncionarioView from "../views/FuncionarioView.vue";
 import ReservasView from "../views/ReservasView.vue";
+import LivrosAdminView from "../views/LivrosAdminView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -23,9 +24,15 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
-      path: "/home'",
+      path: "/home",
       name: "livros",
       component: LivroView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/livrosAdmin",
+      name: "livros-admin",
+      component: LivrosAdminView,
       meta: { requiresAuth: true },
     },
     {
@@ -119,7 +126,7 @@ router.beforeEach(async (to) => {
       return true;
     }
 
-    return { name: 'livros' };
+    return { name: 'admin' };
   }
 
   // Rota de funcionário

@@ -50,7 +50,7 @@ onUnmounted(() => document.removeEventListener("click", closeDropdown));
           <svg v-if="currentTheme === 'light'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
           <svg v-else xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         </button>
-        <router-link :to="{ name: 'reservas' }" class="nav-link">Reservas</router-link>
+        <router-link :to="{ name: 'reservas' }" class="nav-link">Minhas<br>Reservas</router-link>
 
         <div class="user-menu" @click="toggleDropdown">
           <img
@@ -79,12 +79,22 @@ onUnmounted(() => document.removeEventListener("click", closeDropdown));
 </template>
 
 <style scoped>
-.user-menu { position: relative; cursor: pointer; margin-left: 4px; }
-.user-photo {
-  width: 36px; height: 36px; border-radius: 50%; object-fit: cover;
-  border: 2px solid rgba(255,255,255,0.3); transition: border-color 0.15s;
+
+.user-menu { position: relative;
+  cursor: pointer;
+  margin-left: 4px;
 }
+
+.user-photo {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255,255,255,0.3);
+  transition: border-color 0.15s;
+}
+
 .user-photo:hover { border-color: rgba(255,255,255,0.7); }
+
 .dropdown {
   position: absolute; top: 44px; right: 0;
   background: var(--card); color: var(--card-foreground);
@@ -92,37 +102,38 @@ onUnmounted(() => document.removeEventListener("click", closeDropdown));
   padding: 12px; min-width: 200px; z-index: 100;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
+
 .dropdown-name { font-weight: 600; font-size: 0.875rem; margin-bottom: 2px; }
+
 .dropdown-email { font-size: 0.8rem; color: var(--muted-foreground); margin-bottom: 8px; word-break: break-all; }
+
 .dropdown-item {
   display: block; text-decoration: none; color: var(--card-foreground);
   padding: 6px 8px; border-radius: calc(var(--radius) - 2px); font-size: 0.875rem;
 }
+
 .dropdown-item:hover { background: var(--accent); }
+
 .theme-toggle {
   background: none; border: none; cursor: pointer;
   font-size: 1.1rem; padding: 4px 8px; line-height: 1;
 }
+
 .logo-nav{
   width: 3%;
 }
+
 .btn-livros{
   background-color: #26749F;
   border-radius: 10px;
+  border: none;
   color: white;
   text-decoration: none;
   border-radius: 50px;
   padding:4px 15px;
   display: inline-block;
 }
-:root {
-    --azul: #368BB8;
-    --azul-escuro: #26749F;
-    --preto: #151515;
-    --branco: #FFFFFF;
-    --fundo: #F7F7F7;
-    --cinza: #D9D9D9;
-}
+
 .nav-title{ 
   color: white;
   text-decoration: none;
@@ -130,5 +141,10 @@ onUnmounted(() => document.removeEventListener("click", closeDropdown));
   font-size: large;
   margin-left: 10px;
   margin-right: 10px;
+}
+
+.nav-link{
+  padding-right: 10px;
+  padding-left: 10px;
 }
 </style>

@@ -183,6 +183,7 @@ const formatDate = (dateString) => {
 .user-card {
   max-width: 500px;
   margin: 0 auto;
+  background-color: var(--primary);
 }
 .photo-section {
   display: flex;
@@ -239,5 +240,31 @@ const formatDate = (dateString) => {
 .system-info p {
   margin-bottom: 0.5rem;
   color: var(--muted-foreground);
+}
+.btn.btn-outline.btn-sm{
+  color: black;
+}
+.btn.btn-outline.btn-sm:hover{
+  color: white;
+}
+.label{
+  color: white;
+}
+.input{
+  color: white;
+}
+.btn{
+  background-color: white;
+  color: black;
+  border-width: 0.5px;
+  border-style: groove;
+  border-color: white;
+}
+.btn:hover{
+  background-color: black;
+  color: white;
+  border-width: 0.5px;
+  border-style: groove;
+  border-color: white;
 }
 </style>

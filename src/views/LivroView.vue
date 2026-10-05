@@ -226,6 +226,11 @@ function fecharPopup() {
 
 <style scoped>
 
+.list-item{
+  padding-left: 2%;
+  padding-right: 2%;
+}
+
 .btn-reservar {
   background-color: #26749F;
   border-color: #26749F;
@@ -233,17 +238,8 @@ function fecharPopup() {
 }
 
 .btn-reservar:hover {
-  background-color: #1f5f83;
-  border-color: #1f5f83;
-}
-
-:root {
-    --azul: #368BB8;
-    --azul-escuro: #26749F;
-    --preto: #151515;
-    --branco: #FFFFFF;
-    --fundo: #F7F7F7;
-    --cinza: #D9D9D9;
+  background-color: #368BB8;
+  border-color: #368BB8;
 }
 
 .livro-header {
@@ -259,6 +255,11 @@ function fecharPopup() {
   cursor: pointer;
 }
 
+.list-item:hover {
+    background-color: #368bb818;
+    border-radius: 10px;
+}
+
 .livro-capa {
   width: 150px;
   height: 230px;
@@ -272,9 +273,7 @@ function fecharPopup() {
 }
 
 .livro-sinopse {
-  margin: 4px 0 0;
   font-size: 14px;
-  color: var(--text-muted);
 }
 
 .sinopse-overlay {
@@ -345,21 +344,22 @@ function fecharPopup() {
   align-items: center;
   justify-content: center;
   margin-top: 8px;
-  padding: 6px 12px;
-  border: 1px solid var(--border);
+  padding: 6px 16px;
+  border: none;
   border-radius: 6px;
-  background: var(--background);
-  color: var(--text);
+  background: #26749F;
+  color: white;
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
   transition: 0.2s ease;
+  width: fit-content;
 }
 
 .btn-sinopse:hover {
-  background: var(--primary);
+  background: #368BB8;
   color: #fff;
-  border-color: var(--primary);
+  border-color: none;
 }
 
 .btn-sinopse:active {
