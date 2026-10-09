@@ -26,29 +26,12 @@ defineProps({
       :key="model.name"
       class="admin-row"
     >
-      <span class="model-name">
+      <RouterLink
+        :to="model.route"
+        class="model-name"
+      >
         {{ model.name }}
-      </span>
-
-      <div class="model-actions">
-
-        <RouterLink
-          :to="`${model.route}/novo`"
-          class="action add"
-        >
-          <span>＋</span>
-          Adicionar
-        </RouterLink>
-
-        <RouterLink
-          :to="model.route"
-          class="action edit"
-        >
-          <span>✎</span>
-          Modificar
-        </RouterLink>
-
-      </div>
+      </RouterLink>
     </div>
 
   </section>
@@ -69,7 +52,6 @@ defineProps({
 .admin-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   min-height: 42px;
   padding: 0 15px;
   border-bottom: 1px solid #292929;
@@ -80,35 +62,14 @@ defineProps({
 }
 
 .model-name {
-  color: #55bfff;
-  font-weight: 600;
-}
-
-.model-actions {
-  display: flex;
-  gap: 32px;
-}
-
-.action {
+  display: block;
+  width: 100%;
+  color: inherit;
   text-decoration: none;
-  font-size: 16px;
+  cursor: pointer;
 }
 
-.action.add {
-  color: #55bfff;
-}
-
-.action.edit {
-  color: #55bfff;
-}
-
-.action.add span {
-  color: #65bd22;
-  font-size: 22px;
-}
-
-.action.edit span {
-  color: #e3b900;
-  font-size: 18px;
+.model-name:hover {
+  text-decoration: underline;
 }
 </style>

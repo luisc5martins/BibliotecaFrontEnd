@@ -51,7 +51,7 @@ function editar(cat) {
     <div class="form-row">
       <div class="form-group">
         <label class="label" for="cat-desc">Descrição</label>
-        <input id="cat-desc" type="text" v-model="categoria.descricao" />
+        <input class="input-categoria" id="cat-desc" type="text" v-model="categoria.descricao" />
       </div>
       <button class="btn" @click="salvar">Salvar</button>
       <button class="btn btn-outline" @click="limpar">Limpar</button>
@@ -81,3 +81,25 @@ function editar(cat) {
     </div>
   </div>
 </template>
+<style scoped>
+.btn.btn-outline.btn-sm {
+  border: 1px solid var(--secondary);
+  cursor: pointer;
+}
+
+.btn.btn-outline.btn-sm:disabled {
+  cursor: not-allowed;
+}
+
+.list-item {
+  border-bottom: 1px solid var(--secondary);
+}
+
+.btn.btn-outline {
+  border: 1px solid var(--secondary);
+}
+
+.input-categoria {
+  border: 1px solid var(--secondary);
+}
+</style>

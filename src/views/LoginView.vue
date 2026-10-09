@@ -43,8 +43,7 @@ async function handleLogin() {
         </div>
         <button type="submit" class="button" style="width:100%">Entrar</button>
       </form>
-      <p class="text-muted text-sm" style="margin-top:16px;text-align:center">
-        Não tem conta? <router-link :to="{ name: 'registro' }">Cadastre-se</router-link>
+      <p class="text-muted text-sm" style="margin-top:16px;text-align:center">Não tem conta? <router-link :to="{ name: 'registro' }">Solicite Cadastro</router-link>
       </p>
     </div>
   </div>
@@ -56,7 +55,7 @@ async function handleLogin() {
   margin: 0 auto;
   width: 250px;
   height: auto;
-  margin-bottom: 80px;
+  margin-bottom: 5%;
 }
 
 .button {

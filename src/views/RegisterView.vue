@@ -18,21 +18,32 @@ async function handleRegister() {
     toast.showToast('As senhas não conferem.', 'error');
     return;
   }
+
   try {
     await authStore.register(email.value, name.value, password.value);
-    router.push({ name: 'livros' });
+
+    toast.showToast(
+      'Cadastro realizado! Aguarde a ativação da sua conta.',
+      'success'
+    );
+
+    router.push({ name: 'login' });
+
   } catch (err) {
     const msg = err.response?.data?.email?.[0]
       || err.response?.data?.password?.[0]
+      || err.response?.data?.detail
       || 'Erro ao criar conta. Verifique os dados.';
+
     toast.showToast(msg, 'error');
+
   }
 }
 </script>
 
 <template>
   <div class="auth-page">
-    <h1 class="page-title text-center">Cadastro</h1>
+    <img class="page-logo text-center" src="@/assets/logoHorizontal.png" alt="Login" />
     <div class="card auth-card">
       <form @submit.prevent="handleRegister">
         <div class="form-group">
@@ -60,4 +71,30 @@ async function handleRegister() {
   </div>
 </template>
 
+<style scoped>
+.page-logo.text-center {
+  display: block;
+  margin: 0 auto;
+  width: 250px;
+  height: auto;
+  margin-bottom: 5%;
+}
 
+.auth-page {
+  width: 100%;
+  height: 100vh;
+  box-sizing: border-box;
+
+  background-image: url('@/assets/imagemBackground.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0px;
+}
+</style>

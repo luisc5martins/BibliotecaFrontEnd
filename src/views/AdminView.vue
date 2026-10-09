@@ -24,7 +24,7 @@ const coreModels = [
   },
   {
     name: 'Usuários',
-    route: '/usuario'
+    route: '/usuarioAdmin'
   }
 ]
 </script>
@@ -49,7 +49,7 @@ const coreModels = [
 <style scoped>
 .admin-page {
   min-height: 100vh;
-  background: #111;
+  background: #232e3c;
   color: #fff;
 }
 
@@ -75,5 +75,13 @@ const coreModels = [
   font-size: 25px;
   font-weight: 400;
   margin: 0 0 30px;
+}
+
+.section-title {
+  border-radius: 10px;
+}
+
+.admin-section {
+  background: #000000;
 }
 </style>

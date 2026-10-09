@@ -10,9 +10,9 @@ import EditoraView from "../views/EditoraView.vue";
 import AutorView from "../views/AutorView.vue";
 import NotFoundView from "../views/NotFoundView.vue";
 import AdminView from "../views/AdminView.vue";
-import FuncionarioView from "../views/FuncionarioView.vue";
 import ReservasView from "../views/ReservasView.vue";
 import LivrosAdminView from "../views/LivrosAdminView.vue";
+import UsuarioAdminView from "../views/UsuarioAdminView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -64,6 +64,12 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
+      path: "/usuarioAdmin",
+      name: "usuario-admin",
+      component: UsuarioAdminView,
+      meta: { requiresAuth: true },
+    },
+    {
       path: "/reservas",
       name: "reservas",
       component: ReservasView,
@@ -88,15 +94,6 @@ const router = createRouter({
         grupo: "Administradores"
       }
     },
-    {
-      path: "/funcionario",
-      name: "funcionario",
-      component: FuncionarioView,
-      meta: {
-        requiresAuth: true,
-        grupo: "Funcionarios"
-      }
-    },
   ],
 });
 
@@ -105,22 +102,18 @@ router.beforeEach(async (to) => {
 
   const loggedIn = !!localStorage.getItem('access_token');
 
-  // Usuário não está logado
   if (to.meta.requiresAuth && !loggedIn) {
     return { name: 'login' };
   }
 
-  // Rota não exige grupo específico
   if (!to.meta.grupo) {
     return true;
   }
 
-  // Garante que os dados do usuário estejam carregados
   if (!authStore.loggedIn) {
     await authStore.checkAuth();
   }
 
-  // Rota de administrador
   if (to.meta.grupo === 'Administradores') {
     if (authStore.isAdmin) {
       return true;
@@ -129,7 +122,6 @@ router.beforeEach(async (to) => {
     return { name: 'admin' };
   }
 
-  // Rota de funcionário
   if (to.meta.grupo === 'Funcionarios') {
     if (authStore.isFuncionario) {
       return true;
