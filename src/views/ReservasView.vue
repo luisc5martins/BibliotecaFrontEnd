@@ -14,7 +14,11 @@ const mostrarPopupCancelar = ref(false)
 const reservaParaCancelar = ref(null)
 
 function voltarInicio() {
-  router.push({ name: 'livros' })
+  if (authStore.isAdmin) {
+    router.push({ name: 'admin' });
+  } else {
+    router.push({ name: 'livros' });
+  }
 }
 
 onMounted(async () => {
@@ -84,7 +88,7 @@ function badgeClass(status) {
   <div class="page">
   <div class="page-header">
     <button class="btn-voltar" @click="voltarInicio" title="Voltar">
-      <
+      &lt;
     </button>
 
     <h1 class="page-title">

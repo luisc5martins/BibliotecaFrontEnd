@@ -2,9 +2,13 @@
 import { ref, reactive, onMounted, onUnmounted } from "vue";
 import { useUsuarioStore } from "@/stores/usuario";
 import { useToastStore } from "@/stores/toast";
+import { useRouter } from 'vue-router';
+import { useAuthStore } from '@/stores/auth';
 
 const usuarioStore = useUsuarioStore();
 const toast = useToastStore();
+const router = useRouter();
+const authStore = useAuthStore();
 
 const defaultUsuario = {
     id: null,
@@ -31,8 +35,8 @@ onUnmounted(() => {
 });
 
 function limparFormulario() {
-  Object.assign(usuario, defaultUsuario)
-  editando.value = false
+    Object.assign(usuario, defaultUsuario)
+    editando.value = false
 }
 
 function editarUsuario(item) {
@@ -54,50 +58,50 @@ function editarUsuario(item) {
 }
 
 async function salvarUsuario() {
-  try {
-    if (!usuario.name || !usuario.email) {
-      toast.error('Preencha nome e e-mail.')
-      return
+    try {
+        if (!usuario.name || !usuario.email) {
+            toast.error('Preencha nome e e-mail.')
+            return
+        }
+
+        if (!editando.value && !usuario.password) {
+            toast.error('Informe uma senha.')
+            return
+        }
+
+        if (!editando.value && usuario.password.length < 8) {
+            toast.error('A senha deve ter pelo menos 8 caracteres.')
+            return
+        }
+
+        const dados = {
+            ...usuario
+        }
+
+        if (editando.value && !dados.password) {
+            delete dados.password
+        }
+
+        await usuarioStore.salvarUsuario(dados)
+
+        toast.success(
+            editando.value
+                ? 'Usuário atualizado com sucesso!'
+                : 'Usuário cadastrado com sucesso!'
+        )
+
+        limparFormulario()
+
+    } catch (error) {
+        console.error(error)
+
+        const mensagem =
+            error.response?.data?.password?.[0] ||
+            error.response?.data?.email?.[0] ||
+            'Erro ao salvar usuário.'
+
+        toast.error(mensagem)
     }
-
-    if (!editando.value && !usuario.password) {
-      toast.error('Informe uma senha.')
-      return
-    }
-
-    if (!editando.value && usuario.password.length < 8) {
-      toast.error('A senha deve ter pelo menos 8 caracteres.')
-      return
-    }
-
-    const dados = {
-      ...usuario
-    }
-
-    if (editando.value && !dados.password) {
-      delete dados.password
-    }
-
-    await usuarioStore.salvarUsuario(dados)
-
-    toast.success(
-      editando.value
-        ? 'Usuário atualizado com sucesso!'
-        : 'Usuário cadastrado com sucesso!'
-    )
-
-    limparFormulario()
-
-  } catch (error) {
-    console.error(error)
-
-    const mensagem =
-      error.response?.data?.password?.[0] ||
-      error.response?.data?.email?.[0] ||
-      'Erro ao salvar usuário.'
-
-    toast.error(mensagem)
-  }
 }
 
 function onBusca() {
@@ -123,18 +127,32 @@ function formatarData(data) {
 
     return new Date(data).toLocaleString("pt-BR");
 }
+
+function voltarInicio() {
+    if (authStore.isAdmin) {
+        router.push({ name: 'admin' });
+    } else {
+        router.push({ name: 'livros' });
+    }
+}
+
 </script>
 
 <template>
     <div class="usuario-admin-page">
 
         <div class="page-header">
-            <div>
+            <div class="page-title-container">
+                <button class="btn-voltar" @click="voltarInicio" title="Voltar">
+                    &lt;
+                </button>
+
                 <h1 class="page-title">Usuários</h1>
-                <p class="page-subtitle">
-                    Gerencie os usuários cadastrados no sistema.
-                </p>
             </div>
+
+            <p class="page-subtitle">
+                Gerencie os usuários cadastrados no sistema.
+            </p>
         </div>
 
         <section class="form-card">
@@ -384,6 +402,40 @@ function formatarData(data) {
 </template>
 
 <style scoped>
+.page-title-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.btn-voltar {
+    width: 30px;
+    height: 30px;
+    border: none;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+    flex-shrink: 0;
+    margin-bottom: 0;
+}
+
+.btn-voltar:hover {
+    transform: translateX(-3px);
+    opacity: 0.85;
+}
+
+.page-title {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+}
+
 .usuario-admin-page {
     width: 100%;
     max-width: 1400px;

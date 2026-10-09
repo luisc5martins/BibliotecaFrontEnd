@@ -2,14 +2,17 @@
 import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import { useAutorStore } from '@/stores/autor'
 import { useToastStore } from '@/stores/toast'
+import { useAuthStore } from '@/stores/auth'
+import { useRouter } from 'vue-router'
 
 const autorStore = useAutorStore()
 const toast = useToastStore()
-
+const authStore = useAuthStore()
 const defaultAutor = { id: null, nome: '' }
 const autor = reactive({ ...defaultAutor })
 const busca = ref('')
 let buscaTimer = null
+const router = useRouter()
 
 onMounted(async () => {
   await autorStore.getAutores()
@@ -44,11 +47,27 @@ function editar(a) {
   Object.assign(autor, a)
 }
 
+function voltarInicio() {
+  if (authStore.isAdmin) {
+    router.push({ name: 'admin' });
+  } else {
+    router.push({ name: 'livros' });
+  }
+}
+
 </script>
 
 <template>
-  <div class="page">
+  
+<div class="page">
+
+  <div class="page-header">
+    <button class="btn-voltar" @click="voltarInicio" title="Voltar">
+      &lt;
+    </button>
+
     <h1 class="page-title">Autores</h1>
+  </div>
     <div class="form-row">
       <div class="form-group">
         <label class="label" for="aut-nome">Nome</label>
@@ -81,6 +100,42 @@ function editar(a) {
   </div>
 </template>
 <style scoped>
+
+.btn-voltar {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  padding: 0;
+  margin: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+}
+
+.btn-voltar:hover {
+  transform: translateX(-3px);
+  opacity: 0.85;
+}
+
+.page-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.page-title {
+  margin: 0;
+}
+
 .btn.btn-outline.btn-sm {
   border: 1px solid var(--secondary);
   cursor: pointer;

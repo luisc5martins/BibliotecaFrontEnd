@@ -2,13 +2,16 @@
 import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import { useCategoriaStore } from '@/stores/categoria'
 import { useToastStore } from '@/stores/toast'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 
 const categoriaStore = useCategoriaStore()
 const toast = useToastStore()
-
+const router = useRouter()
 const defaultCategoria = { id: null, descricao: '' }
 const categoria = reactive({ ...defaultCategoria })
 const busca = ref('')
+const authStore = useAuthStore()
 let buscaTimer = null
 
 onMounted(async () => {
@@ -43,11 +46,28 @@ async function salvar() {
 function editar(cat) {
   Object.assign(categoria, cat)
 }
+
+function voltarInicio() {
+  if (authStore.isAdmin) {
+    router.push({ name: 'admin' });
+  } else {
+    router.push({ name: 'livros' });
+  }
+}
+
 </script>
 
 <template>
+
   <div class="page">
-    <h1 class="page-title">Categorias</h1>
+
+    <div class="page-header">
+      <button class="btn-voltar" @click="voltarInicio" title="Voltar">
+        &lt;
+      </button>
+
+      <h1 class="page-title">Categorias</h1>
+    </div>
     <div class="form-row">
       <div class="form-group">
         <label class="label" for="cat-desc">Descrição</label>
@@ -69,19 +89,61 @@ function editar(cat) {
       <li class="list-item" v-for="cat in categoriaStore.categorias" :key="cat.id">
         <span>({{ cat.id }}) — {{ cat.descricao }}</span>
         <div class="list-item-actions">
-          <button class="btn btn-outline btn-sm btn-icon-sm" @click="editar(cat)" title="Editar"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          <button class="btn btn-outline btn-sm btn-icon-sm" @click="editar(cat)" title="Editar"><svg
+              xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+            </svg></button>
         </div>
       </li>
     </ul>
 
     <div class="paginator">
-      <button class="btn btn-outline btn-sm" :disabled="categoriaStore.meta.page == 1" @click="categoriaStore.paginaAnterior">Anterior</button>
-      <button class="btn btn-outline btn-sm" :disabled="categoriaStore.meta.page == categoriaStore.meta.total_pages" @click="categoriaStore.proximaPagina">Próxima</button>
+      <button class="btn btn-outline btn-sm" :disabled="categoriaStore.meta.page == 1"
+        @click="categoriaStore.paginaAnterior">Anterior</button>
+      <button class="btn btn-outline btn-sm" :disabled="categoriaStore.meta.page == categoriaStore.meta.total_pages"
+        @click="categoriaStore.proximaPagina">Próxima</button>
       <span>Página {{ categoriaStore.meta.page }} de {{ categoriaStore.meta.total_pages }}</span>
     </div>
   </div>
 </template>
 <style scoped>
+.page-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.btn-voltar {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  padding: 0;
+  margin: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+}
+
+.btn-voltar:hover {
+  transform: translateX(-3px);
+  opacity: 0.85;
+}
+
+.page-title {
+  margin: 0;
+}
+
 .btn.btn-outline.btn-sm {
   border: 1px solid var(--secondary);
   cursor: pointer;

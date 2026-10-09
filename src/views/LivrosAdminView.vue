@@ -1,18 +1,13 @@
 <script setup>
-import {
-  ref,
-  reactive,
-  onMounted,
-  onUnmounted
-} from 'vue'
-
-import { useLivroStore } from '@/stores/livro'
+import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import { useToastStore } from '@/stores/toast'
-
 import LivrosApi from '@/api/livros'
 import AutorApi from '@/api/autor'
 import EditoraApi from '@/api/editora'
 import CategoriaApi from '@/api/categoria'
+import { useLivroStore } from '@/stores/livro'
+import { useRouter } from 'vue-router';
+import { useAuthStore } from '@/stores/auth';
 
 const livroStore = useLivroStore()
 const toast = useToastStore()
@@ -21,7 +16,16 @@ const livrosApi = new LivrosApi()
 const autorApi = new AutorApi()
 const editoraApi = new EditoraApi()
 const categoriaApi = new CategoriaApi()
+const router = useRouter();
+const authStore = useAuthStore();
 
+function voltarInicio() {
+  if (authStore.isAdmin) {
+    router.push({ name: 'admin' });
+  } else {
+    router.push({ name: 'livros' });
+  }
+}
 
 const defaultLivro = {
   id: null,
@@ -295,11 +299,21 @@ function editar(l) {
 
 <template>
 
-  <div class="page">
+<div class="page">
+
+<div class="page">
+
+  <div class="page-header">
+    <button class="btn-voltar" @click="voltarInicio" title="Voltar">
+      &lt;
+    </button>
 
     <h1 class="page-title">
       Livros
     </h1>
+  </div>
+
+  </div>
 
     <div class="form-row">
 
@@ -503,6 +517,41 @@ function editar(l) {
 </template>
 
 <style scoped>
+.page-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.btn-voltar {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  padding: 0;
+  margin: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+}
+
+.btn-voltar:hover {
+  transform: translateX(-3px);
+  opacity: 0.85;
+}
+
+.page-title {
+  margin: 0;
+}
+
 .input-sinopse {
   width: 100%;
   min-height: 100px;
