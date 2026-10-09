@@ -5,20 +5,9 @@ import { useLivroStore } from "@/stores/livro";
 import { useReservaStore } from "@/stores/reserva";
 import { useAuthStore } from "@/stores/auth";
 import { useToastStore } from "@/stores/toast";
-import LivrosApi from "@/api/livros";
+import { useCategoriaStore } from "@/stores/categoria";
+import { useAutorStore } from "@/stores/autor";
 
-onMounted(async () => {
-  try {
-    await livroStore.getLivros();
-
-    console.log('LIVROS CARREGADOS:', livroStore.livros);
-  } catch (error) {
-    console.error('ERRO AO CARREGAR LIVROS:', error);
-    toast.showToast('Erro ao carregar livros.', 'error');
-  }
-});
-
-const livrosApi = new LivrosApi();
 const livroStore = useLivroStore();
 const reservaStore = useReservaStore();
 const authStore = useAuthStore();
@@ -27,26 +16,56 @@ const canManage = computed(() => authStore.canManage);
 const showModal = ref(false);
 const livroParaEditar = ref(null);
 const busca = ref('');
+const autor = ref('');
+const categoria = ref('');
 let buscaTimer = null;
 const livroSinopse = ref(null);
+const categoriaStore = useCategoriaStore();
+const autorStore = useAutorStore();
 
 onMounted(async () => {
   try {
-    await livroStore.getLivros();
+    await Promise.all([
+      livroStore.getLivros(),
+      categoriaStore.getCategorias(),
+      autorStore.getAutores()
+    ])
+
+    console.log('LIVROS:', livroStore.livros)
+    console.log('CATEGORIAS:', categoriaStore.categorias)
+    console.log('AUTORES:', autorStore.autores)
   } catch (error) {
-    toast.showToast('Erro ao carregar livros.', 'error');
+    console.error('ERRO AO CARREGAR DADOS:', error)
+    toast.showToast(
+      'Erro ao carregar livros, categorias ou autores.',
+      'error'
+    )
   }
-});
+})
 
 onUnmounted(() => {
   clearTimeout(buscaTimer);
 });
 
-function onBusca() {
+function aplicarFiltros() {
   clearTimeout(buscaTimer);
+
   buscaTimer = setTimeout(() => {
-    livroStore.getLivros(1, busca.value);
+    livroStore.getLivros(
+      1,
+      busca.value,
+      autor.value,
+      categoria.value
+    );
   }, 400);
+}
+
+function limparFiltros() {
+  busca.value = '';
+  autor.value = '';
+  categoria.value = '';
+
+  livroStore.getLivros(1);
 }
 
 function abrirModal() {
@@ -78,18 +97,24 @@ async function reservarLivro(livroId) {
     const mensagem = Array.isArray(data)
       ? data[0]
       : data?.detail ||
-        data?.non_field_errors?.[0] ||
-        data?.message ||
-        'Erro ao reservar o livro.'
+      data?.non_field_errors?.[0] ||
+      data?.message ||
+      'Erro ao reservar o livro.'
 
     mostrarPopup(mensagem, 'erro')
   }
 }
 
 async function aoSalvar() {
-  showModal.value = false;
-  toast.showToast('Livro salvo!');
-  await livroStore.getLivros(livroStore.meta.page);
+  showModal.value = false
+  toast.showToast('Livro salvo!')
+
+  await livroStore.getLivros(
+    livroStore.meta.page,
+    livroStore.currentSearch,
+    livroStore.currentAutor,
+    livroStore.currentCategoria
+  )
 }
 
 function capUrl(livro) {
@@ -132,9 +157,36 @@ function fecharPopup() {
       <button v-if="canManage" class="btn btn-icon" @click="abrirModal">+</button>
     </div>
 
-    <div class="search-wrapper">
-      <input class="search-input" type="text" v-model="busca" @input="onBusca" placeholder="Buscar livros..." />
-      <button v-if="busca" class="search-clear" @click="busca = ''; onBusca()">&times;</button>
+    <div class="filtros-livros">
+
+      <div class="search-wrapper">
+        <input class="search-input" type="text" v-model="busca" @input="aplicarFiltros"
+          placeholder="Buscar livros..." />
+
+        <button v-if="busca" class="search-clear" @click="busca = ''; aplicarFiltros()">
+          &times;
+        </button>
+      </div>
+
+      <select v-model="autor" @change="aplicarFiltros" class="filtro-select">
+        <option value="">Todos os autores</option>
+        
+        <option v-for="aut in autorStore.autores" :key="aut.id" :value="aut.nome">
+          {{ aut.nome }}
+        </option>
+      </select>
+
+      <select v-model="categoria" @change="aplicarFiltros" class="filtro-select">
+        <option value="">Todas as categorias</option>
+        <option v-for="cat in categoriaStore.categorias" :key="cat.id" :value="cat.descricao">
+          {{ cat.descricao }}
+        </option>
+      </select>
+
+      <button v-if="busca || autor || categoria" class="btn btn-outline" @click="limparFiltros">
+        Limpar filtros
+      </button>
+
     </div>
 
     <p v-if="livroStore.loading" class="text-muted">Carregando...</p>
@@ -148,19 +200,15 @@ function fecharPopup() {
             <strong>{{ livro.titulo }}</strong>
             <span class="quantidade-livro" :class="{ esgotado: livro.quantidade === 0 }">
               {{ livro.quantidade > 0
-              ? `${livro.quantidade} disponíveis`
-              : 'Indisponível'
+                ? `${livro.quantidade} disponíveis`
+                : 'Indisponível'
               }}
             </span>
             <button v-if="livro.sinopse" class="btn-sinopse" @click.stop="abrirSinopse(livro)">Ver sinopse</button>
           </div>
         </div>
         <div class="list-item-actions">
-          <button class="btn btn-reservar btn-sm btn-icon-sm" @click="reservarLivro(livro.id)" title="Reservar livro">
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M4 4h16v17l-8-4-8 4V4z" />
-            </svg>
-          </button>
+          <button class="btn btn-reservar btn-sm" @click="reservarLivro(livro.id)" title="Reservar livro">Reservar</button>
           <button v-if="canManage" class="btn btn-destructive btn-sm btn-icon-sm" @click="excluir(livro.id)"
             title="Excluir"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
               fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -218,15 +266,14 @@ function fecharPopup() {
 
       <h2>{{ popup.tipo === 'sucesso' ? 'Reserva realizada!' : 'Não foi possível reservar' }}</h2>
       <p>{{ popup.mensagem }}</p>
-    
+
       <button class="btn btn-reservar popup-btn" @click="fecharPopup">OK</button>
     </div>
   </div>
 </template>
 
 <style scoped>
-
-.list-item{
+.list-item {
   padding-left: 2%;
   padding-right: 2%;
 }
@@ -256,8 +303,8 @@ function fecharPopup() {
 }
 
 .list-item:hover {
-    background-color: #368bb818;
-    border-radius: 10px;
+  background-color: #368bb818;
+  border-radius: 10px;
 }
 
 .livro-capa {
@@ -301,7 +348,7 @@ function fecharPopup() {
 }
 
 .sinopse-modal h2 {
-  margin-top: 0;
+  margin-top: 4%;
   margin-bottom: 1.5rem;
 }
 
@@ -309,11 +356,13 @@ function fecharPopup() {
   position: absolute;
   top: 10px;
   right: 15px;
+  border-radius: 10px;
   border: none;
-  background: transparent;
+  background: #368BB8;
   font-size: 28px;
   cursor: pointer;
   color: var(--text-muted);
+  padding: 0 6px;
 }
 
 .sinopse-capa {
@@ -455,5 +504,63 @@ function fecharPopup() {
     opacity: 1;
     transform: scale(1);
   }
+}
+
+.filtros-livros {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.filtro-select {
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--background);
+  color: var(--text);
+  cursor: pointer;
+  min-width: 180px;
+}
+
+.filtro-select:focus {
+  outline: none;
+  border-color: #26749F;
+}
+
+@media (max-width: 768px) {
+  .filtros-livros {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filtro-select {
+    width: 100%;
+  }
+}
+
+.page {
+  min-height: 100vh;
+  height: auto;
+  overflow-y: visible;
+  padding-bottom: 40px;
+}
+
+.filtro-select {
+  border: 1px solid var(--secondary);
+}
+
+.list-item {
+  border-color: var(--secondary);
+}
+
+.btn.btn-outline.btn-sm{
+  border-color: var(--secondary);
+}
+
+.search-input{
+  border-color: black;
 }
 </style>
