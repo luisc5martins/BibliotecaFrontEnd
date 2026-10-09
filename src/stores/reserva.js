@@ -71,6 +71,14 @@ export const useReservaStore = defineStore('reserva', () => {
     }
   }
 
+  async function cancelarReserva(id) {
+    const data = await reservaApi.cancelarReserva(id)
+
+    await getReservas(meta.value.page || 1)
+
+    return data
+  }
+
   return {
     reservas,
     reservaAtual,
@@ -80,6 +88,7 @@ export const useReservaStore = defineStore('reserva', () => {
     getReservas,
     getReserva,
     criarReserva,
+    cancelarReserva,
 
     proximaPagina,
     paginaAnterior

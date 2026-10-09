@@ -1,13 +1,13 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from "vue";
+import { ref, computed, onMounted, onUnmounted, watch } from "vue";
 import { useAuthStore } from "@/stores/auth";
 
 const authStore = useAuthStore();
 const isLoggedIn = computed(() => authStore.loggedIn);
 const user = computed(() => authStore.user);
 const canManage = computed(() => authStore.canManage);
+const isSuperuser = computed(() => authStore.user?.is_superuser === true);
 const showDropdown = ref(false);
-
 const currentTheme = ref(localStorage.getItem('theme') || 'light');
 
 function applyTheme(theme) {
@@ -15,7 +15,9 @@ function applyTheme(theme) {
 }
 
 function toggleTheme() {
-  currentTheme.value = currentTheme.value === 'light' ? 'dark' : 'light';
+  currentTheme.value =
+    currentTheme.value === 'light' ? 'dark' : 'light';
+
   localStorage.setItem('theme', currentTheme.value);
   applyTheme(currentTheme.value);
 }
@@ -23,14 +25,21 @@ function toggleTheme() {
 function toggleDropdown() {
   showDropdown.value = !showDropdown.value;
 }
+
 function closeDropdown(e) {
-  if (!e.target.closest(".user-menu")) showDropdown.value = false;
+  if (!e.target.closest(".user-menu")) {
+    showDropdown.value = false;
+  }
 }
+
 onMounted(() => {
   document.addEventListener("click", closeDropdown);
   applyTheme(currentTheme.value);
 });
-onUnmounted(() => document.removeEventListener("click", closeDropdown));
+
+onUnmounted(() => {
+  document.removeEventListener("click", closeDropdown);
+});
 </script>
 
 <template>
@@ -38,11 +47,8 @@ onUnmounted(() => document.removeEventListener("click", closeDropdown));
     <nav>
       <div class="nav-left">
         <img src="../assets/logo.png" class="logo-nav">
-        <router-link :to="{ name: 'livros' }" class="nav-title">Biblioteca Antares</router-link>
-        <router-link v-if="canManage" :to="{ name: 'categorias' }" class="nav-link">Categorias</router-link>
-        <router-link v-if="canManage" :to="{ name: 'editoras' }" class="nav-link">Editoras</router-link>
-        <router-link v-if="canManage" :to="{ name: 'autores' }" class="nav-link">Autores</router-link>
-        <router-link :to="{ name: 'livros' }" class="btn-livros">Livros</router-link>
+        <router-link v-if="isSuperuser" :to="{ name: 'admin' }" class="nav-title">Biblioteca Antares</router-link>
+        <router-link v-else :to="{ name: 'livros' }" class="nav-title">Biblioteca Antares</router-link>
       </div>
 
       <div class="nav-right" v-if="isLoggedIn">
@@ -50,14 +56,10 @@ onUnmounted(() => document.removeEventListener("click", closeDropdown));
           <svg v-if="currentTheme === 'light'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
           <svg v-else xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         </button>
-        <router-link :to="{ name: 'reservas' }" class="nav-link">Minhas<br>Reservas</router-link>
+        <router-link v-if="!isSuperuser" :to="{ name: 'reservas' }" class="nav-link">Minhas<br>Reservas</router-link>
 
         <div class="user-menu" @click="toggleDropdown">
-          <img
-            :src="user.foto?.url || 'https://placehold.co/36'"
-            alt="Menu do usuário"
-            class="user-photo"
-          />
+          <img :src="user.foto?.url || user.foto || 'https://placehold.co/36'" alt="Menu do usuário" class="user-photo"/>
           <div v-if="showDropdown" class="dropdown">
             <p class="dropdown-name">{{ user.name }}</p>
             <p class="dropdown-email">{{ user.email }}</p>
@@ -80,7 +82,8 @@ onUnmounted(() => document.removeEventListener("click", closeDropdown));
 
 <style scoped>
 
-.user-menu { position: relative;
+.user-menu { 
+  position: relative;
   cursor: pointer;
   margin-left: 4px;
 }
@@ -93,7 +96,9 @@ onUnmounted(() => document.removeEventListener("click", closeDropdown));
   transition: border-color 0.15s;
 }
 
-.user-photo:hover { border-color: rgba(255,255,255,0.7); }
+.user-photo:hover { 
+  border-color: rgba(255,255,255,0.7); 
+}
 
 .dropdown {
   position: absolute; top: 44px; right: 0;
@@ -103,16 +108,31 @@ onUnmounted(() => document.removeEventListener("click", closeDropdown));
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
-.dropdown-name { font-weight: 600; font-size: 0.875rem; margin-bottom: 2px; }
-
-.dropdown-email { font-size: 0.8rem; color: var(--muted-foreground); margin-bottom: 8px; word-break: break-all; }
-
-.dropdown-item {
-  display: block; text-decoration: none; color: var(--card-foreground);
-  padding: 6px 8px; border-radius: calc(var(--radius) - 2px); font-size: 0.875rem;
+.dropdown-name { 
+  font-weight: 600; 
+  font-size: 0.875rem;
+  margin-bottom: 2px; 
 }
 
-.dropdown-item:hover { background: var(--accent); }
+.dropdown-email { 
+  font-size: 0.8rem;
+  color: var(--muted-foreground);
+  margin-bottom: 8px;
+  word-break: break-all;
+}
+
+.dropdown-item {
+  display: block;
+  text-decoration: none;
+  color: var(--card-foreground);
+  padding: 6px 8px;
+  border-radius: calc(var(--radius) - 2px);
+  font-size: 0.875rem;
+}
+
+.dropdown-item:hover {
+  background: var(--accent);
+}
 
 .theme-toggle {
   background: none; border: none; cursor: pointer;
@@ -146,5 +166,10 @@ onUnmounted(() => document.removeEventListener("click", closeDropdown));
 .nav-link{
   padding-right: 10px;
   padding-left: 10px;
+}
+
+.nav-link:hover{
+  margin-top: 0px;
+  padding-bottom: 5px;
 }
 </style>

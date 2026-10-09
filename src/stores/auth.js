@@ -10,14 +10,12 @@ export const useAuthStore = defineStore('auth', () => {
   const user = ref({});
   const loggedIn = ref(false);
 
-  // Verifica se o usuário pertence ao grupo Administradores
   const isAdmin = computed(() =>
     user.value.groups?.some(
       grupo => grupo.name === 'Administradores'
     ) ?? false
   );
 
-  // Verifica se o usuário pertence ao grupo Funcionários
   const isFuncionario = computed(() =>
     user.value.groups?.some(
       grupo => grupo.name === 'Funcionarios'
@@ -31,15 +29,13 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.setItem('access_token', data.access);
     localStorage.setItem('refresh_token', data.refresh);
 
-    // Busca os dados do usuário autenticado
     user.value = await authService.getUser();
 
     loggedIn.value = true;
   };
 
   async function register(email, name, password) {
-    await authService.register(email, name, password);
-    await login(email, password);
+    return await authService.register(email, name, password);
   }
 
   function logout() {

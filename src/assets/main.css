@@ -147,7 +147,7 @@ textarea { resize: vertical; min-height: 60px; }
 
 /* ===== Search ===== */
 .search-wrapper { position: relative; width: 100%; margin-bottom: 16px; }
-.search-wrapper .search-input { width: 100%; padding-right: 32px; margin-bottom: 0; border-color: #368BB8;}
+.search-wrapper .search-input { width: 100%; padding-right: 32px; margin-bottom: 0; border-color: var(--secondary); }
 .search-clear {
   position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
   background: none; border: none; cursor: pointer; color: var(--muted-foreground);
@@ -200,4 +200,43 @@ textarea { resize: vertical; min-height: 60px; }
   .col-2, .col-4, .col-6, .col-8, .col-10, .col-12 { width: 100%; }
   .modal-content { width: 95%; padding: 16px; }
   .nav-link { padding: 4px 8px; font-size: 0.8rem; }
+}
+
+html {
+  overflow-y: auto !important;
+  height: auto !important;
+}
+
+body {
+  overflow-y: auto !important;
+  overflow-x: hidden;
+  height: auto !important;
+  min-height: 100vh;
+}
+
+#app {
+  height: auto !important;
+  min-height: 100vh;
+  overflow: visible !important;
+}
+
+main {
+  height: auto !important;
+  min-height: calc(100vh - 70px);
+  overflow: visible !important;
+  padding-top: 56px;
+}
+
+body::-webkit-scrollbar {
+  width: 12px;
+}
+
+body::-webkit-scrollbar-track {
+  background: #ffffff;
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: #368BB8;
+  border-radius: 20px;
+  border: 5px solid #5a9bbe;
 }

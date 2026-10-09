@@ -6,7 +6,7 @@ import { useToastStore } from '@/stores/toast'
 const autorStore = useAutorStore()
 const toast = useToastStore()
 
-const defaultAutor = { id: null, nome: '', email: '' }
+const defaultAutor = { id: null, nome: '' }
 const autor = reactive({ ...defaultAutor })
 const busca = ref('')
 let buscaTimer = null
@@ -52,7 +52,7 @@ function editar(a) {
     <div class="form-row">
       <div class="form-group">
         <label class="label" for="aut-nome">Nome</label>
-        <input id="aut-nome" type="text" v-model="autor.nome" />
+        <input class="input-name" id="aut-nome" type="text" v-model="autor.nome" />
       </div>
       <button class="btn" @click="salvar">Salvar</button>
       <button class="btn btn-outline" @click="limpar">Limpar</button>
@@ -80,3 +80,25 @@ function editar(a) {
     </div>
   </div>
 </template>
+<style scoped>
+.btn.btn-outline.btn-sm {
+  border: 1px solid var(--secondary);
+  cursor: pointer;
+}
+
+.btn.btn-outline.btn-sm:disabled {
+  cursor: not-allowed;
+}
+
+.list-item {
+  border-bottom: 1px solid var(--secondary);
+}
+
+.btn.btn-outline {
+  border: 1px solid var(--secondary);
+}
+
+.input-name {
+  border: 1px solid var(--secondary);
+}
+</style>

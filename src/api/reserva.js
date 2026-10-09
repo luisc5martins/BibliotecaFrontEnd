@@ -20,4 +20,9 @@ export default class ReservaApi {
     const { data } = await axios.put(`/reservas/${id}/`, { itens })
     return data
   }
+
+  async cancelarReserva(id) {
+    const { data } = await axios.post(`/reservas/${id}/cancelar/`)
+    return data
+  }
 }

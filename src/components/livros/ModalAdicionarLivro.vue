@@ -203,10 +203,6 @@ onMounted(() => {
               <label class="label">Quantidade</label>
               <input class="input" type="number" v-model.number="livro.quantidade" placeholder="Quantidade" min="0" />
             </div>
-            <div class="form-group">
-              <label class="label">Preço</label>
-              <input class="input" type="number" v-model.number="livro.preco" placeholder="Preço" step="0.01" min="0" />
-            </div>
           </div>
           <div class="form-row">
             <div class="form-group" style="flex: 2">
