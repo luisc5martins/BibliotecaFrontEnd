@@ -2,50 +2,53 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import LivrosApi from '@/api/livros'
 
-const livrosApi = new LivrosApi()
-
 export const useLivroStore = defineStore('livro', () => {
   const livros = ref([])
-
   const loading = ref(false)
-
   const meta = ref({
     page: 0,
     page_size: 0,
     total_pages: 0
   })
 
+  const livrosApi = new LivrosApi()
   const currentSearch = ref('')
   const currentAutor = ref('')
   const currentCategoria = ref('')
+  const formatos = ref([]);
+
+  async function getFormatos() {
+    formatos.value = await livrosApi.buscarFormatos();
+  }
 
   async function getLivros(
     page = 1,
     search = '',
     autor = '',
-    categoria = ''
+    categoria = '',
+    formato = ''
   ) {
-    currentSearch.value = search
-    currentAutor.value = autor
-    currentCategoria.value = categoria
+    currentSearch.value = search;
+    currentAutor.value = autor;
+    currentCategoria.value = categoria;
 
-    loading.value = true
+    loading.value = true;
 
     try {
       const data = await livrosApi.buscarTodosOsLivros(
         page,
         search,
         autor,
-        categoria
-      )
+        categoria,
+        formato
+      );
 
-      livros.value = data.results
-
-      meta.value.page = data.page
-      meta.value.page_size = data.page_size
-      meta.value.total_pages = data.total_pages
+      livros.value = data.results;
+      meta.value.page = data.page;
+      meta.value.page_size = data.page_size;
+      meta.value.total_pages = data.total_pages;
     } finally {
-      loading.value = false
+      loading.value = false;
     }
   }
 
@@ -118,6 +121,8 @@ export const useLivroStore = defineStore('livro', () => {
     salvarLivro,
     excluirLivro,
     proximaPagina,
-    paginaAnterior
+    paginaAnterior,
+    formatos,
+    getFormatos,
   }
 })

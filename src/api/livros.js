@@ -1,34 +1,28 @@
 import axios from "axios";
 
 export default class LivrosApi {
-  async buscarTodosOsLivros(
-    page = 1,
-    search = "",
-    autor = "",
-    categoria = ""
-  ) {
-    const params = new URLSearchParams();
+async buscarTodosOsLivros(
+  page = 1,
+  search = "",
+  autor = "",
+  categoria = "",
+  formato = ""
+) {
+  const params = new URLSearchParams();
 
-    params.append("page", page);
+  params.append("page", page);
 
-    if (search) {
-      params.append("search", search);
-    }
+  if (search) params.append("search", search);
+  if (autor) params.append("autores__nome", autor);
+  if (categoria) params.append("categoria__descricao", categoria);
+  if (formato) params.append("formato", formato);
 
-    if (autor) {
-      params.append("autores__nome", autor);
-    }
+  const { data } = await axios.get(
+    `/livros/?${params.toString()}`
+  );
 
-    if (categoria) {
-      params.append("categoria__descricao", categoria);
-    }
-
-    const { data } = await axios.get(
-      `/livros/?${params.toString()}`
-    );
-
-    return data;
-  }
+  return data;
+}
 
   async buscarLivro(id) {
     const { data } = await axios.get(`/livros/${id}/`);
@@ -105,6 +99,11 @@ export default class LivrosApi {
       formData
     );
 
+    return data;
+  }
+
+  async buscarFormatos() {
+    const { data } = await axios.get("/formatos/");
     return data;
   }
 }

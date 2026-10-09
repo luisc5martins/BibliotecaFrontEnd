@@ -22,18 +22,16 @@ let buscaTimer = null;
 const livroSinopse = ref(null);
 const categoriaStore = useCategoriaStore();
 const autorStore = useAutorStore();
+const formato = ref('');
 
 onMounted(async () => {
   try {
     await Promise.all([
       livroStore.getLivros(),
       categoriaStore.getCategorias(),
-      autorStore.getAutores()
+      autorStore.getAutores(),
+      livroStore.getFormatos()
     ])
-
-    console.log('LIVROS:', livroStore.livros)
-    console.log('CATEGORIAS:', categoriaStore.categorias)
-    console.log('AUTORES:', autorStore.autores)
   } catch (error) {
     console.error('ERRO AO CARREGAR DADOS:', error)
     toast.showToast(
@@ -55,7 +53,8 @@ function aplicarFiltros() {
       1,
       busca.value,
       autor.value,
-      categoria.value
+      categoria.value,
+      formato.value
     );
   }, 400);
 }
@@ -64,6 +63,7 @@ function limparFiltros() {
   busca.value = '';
   autor.value = '';
   categoria.value = '';
+  formato.value = '';
 
   livroStore.getLivros(1);
 }
@@ -71,16 +71,6 @@ function limparFiltros() {
 function abrirModal() {
   livroParaEditar.value = null;
   showModal.value = true;
-}
-
-async function excluir(id) {
-  if (!confirm('Tem certeza que deseja excluir este livro?')) return;
-  try {
-    await livroStore.excluirLivro(id);
-    toast.showToast('Livro excluído!');
-  } catch (error) {
-    toast.showToast(error.response?.data?.detail || 'Erro ao excluir. Verifique se não há registros vinculados.', 'error');
-  }
 }
 
 async function reservarLivro(livroId) {
@@ -106,15 +96,16 @@ async function reservarLivro(livroId) {
 }
 
 async function aoSalvar() {
-  showModal.value = false
-  toast.showToast('Livro salvo!')
+  showModal.value = false;
+  toast.showToast('Livro salvo!');
 
   await livroStore.getLivros(
     livroStore.meta.page,
     livroStore.currentSearch,
     livroStore.currentAutor,
-    livroStore.currentCategoria
-  )
+    livroStore.currentCategoria,
+    formato.value
+  );
 }
 
 function capUrl(livro) {
@@ -170,7 +161,7 @@ function fecharPopup() {
 
       <select v-model="autor" @change="aplicarFiltros" class="filtro-select">
         <option value="">Todos os autores</option>
-        
+
         <option v-for="aut in autorStore.autores" :key="aut.id" :value="aut.nome">
           {{ aut.nome }}
         </option>
@@ -183,7 +174,18 @@ function fecharPopup() {
         </option>
       </select>
 
-      <button v-if="busca || autor || categoria" class="btn btn-outline" @click="limparFiltros">
+      <select v-model="formato" @change="aplicarFiltros" class="filtro-select">
+        <option value="">Todos os formatos</option>
+        <option
+          v-for="fmt in livroStore.formatos"
+          :key="fmt.valor"
+          :value="fmt.valor"
+        >
+          {{ fmt.descricao }}
+        </option>
+      </select>
+
+      <button v-if="busca || autor || categoria || formato" class="btn btn-outline" @click="limparFiltros">
         Limpar filtros
       </button>
 
@@ -208,7 +210,8 @@ function fecharPopup() {
           </div>
         </div>
         <div class="list-item-actions">
-          <button class="btn btn-reservar btn-sm" @click="reservarLivro(livro.id)" title="Reservar livro">Reservar</button>
+          <button class="btn btn-reservar btn-sm" @click="reservarLivro(livro.id)"
+            title="Reservar livro">Reservar</button>
           <button v-if="canManage" class="btn btn-destructive btn-sm btn-icon-sm" @click="excluir(livro.id)"
             title="Excluir"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
               fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -556,11 +559,11 @@ function fecharPopup() {
   border-color: var(--secondary);
 }
 
-.btn.btn-outline.btn-sm{
+.btn.btn-outline.btn-sm {
   border-color: var(--secondary);
 }
 
-.search-input{
+.search-input {
   border-color: black;
 }
 </style>
