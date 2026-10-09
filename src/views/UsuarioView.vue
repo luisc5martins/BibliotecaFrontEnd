@@ -3,7 +3,9 @@ import { ref, computed, watch, onMounted } from "vue";
 import { useAuthStore } from "@/stores/auth";
 import { useToastStore } from "@/stores/toast";
 import UploadApi from "@/api/upload";
+import { useRouter } from 'vue-router'
 
+const router = useRouter();
 const authStore = useAuthStore();
 const toastStore = useToastStore();
 const uploadApi = new UploadApi();
@@ -16,6 +18,10 @@ const imageFile = ref(null);
 const imagePreview = ref(null);
 const fileInputRef = ref(null);
 const loading = ref(false);
+
+function voltarInicio() {
+  router.push({ name: 'livros' })
+}
 
 function syncForm() {
   if (usuario.value) {
@@ -97,11 +103,13 @@ const formatDate = (dateString) => {
 
 <template>
   <div class="page" v-if="usuario && usuario.id">
+  <div class="page-header">
+    <button class="btn-voltar" @click="voltarInicio" title="Voltar"><</button>
     <h1 class="page-title">Perfil do Usuário</h1>
+  </div>
 
     <div class="card user-card">
       <form @submit.prevent="handleSave">
-        <!-- Foto de Perfil -->
         <div class="photo-section">
           <div class="photo-wrapper" @click="openSelectImage" title="Clique para alterar a foto">
             <img
@@ -131,8 +139,6 @@ const formatDate = (dateString) => {
             Alterar Foto
           </button>
         </div>
-
-        <!-- Formulário de Edição -->
         <div class="form-group">
           <label class="label" for="user-name">Nome</label>
           <input
@@ -163,8 +169,6 @@ const formatDate = (dateString) => {
       </form>
 
       <hr class="divider" />
-
-      <!-- Informações do Sistema -->
       <div class="system-info">
         <h3 class="system-title">Informações da Conta</h3>
         <p>Último Login: <strong>{{ formatDate(usuario.last_login) || "Nunca logado" }}</strong></p>
@@ -177,6 +181,32 @@ const formatDate = (dateString) => {
 </template>
 
 <style scoped>
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-voltar {
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+  margin-bottom: 24px;
+}
+
+.btn-voltar:hover {
+  transform: translateX(-3px);
+  opacity: 0.85;
+}
 .form-group {
   margin-bottom: 4%;
 }
